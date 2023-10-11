@@ -24,3 +24,15 @@ borgbackup_server_auth_users:
   - host: host_2.example.org
     key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMOREPUBLICKEYINFO host_2"
 ```
+
+Now deploy by running
+
+```zsh
+just install-all
+```
+
+In the end you only need to point your clients to the repositories. The repository should look like this
+
+```
+ssh://borgbackup@<hostname>/./
+```
