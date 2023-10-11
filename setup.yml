@@ -1,0 +1,6 @@
+- name: "Set up a borgbackup server"
+  hosts: "{{ target if target is defined else 'borgbackup_servers' }}"
+  become: true
+
+  roles:
+    - role: roles/borgbackup-server

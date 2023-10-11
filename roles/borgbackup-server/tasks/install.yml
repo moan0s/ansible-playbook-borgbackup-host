@@ -1,0 +1,33 @@
+---
+- name: Install borgbackup package
+  ansible.builtin.package: name=borgbackup state=present
+
+- name: Create backup_user group
+  ansible.builtin.group: name="{{ borgbackup_group }}" state=present
+
+- name: Create backup_user
+  user: name="{{ borgbackup_user }}" shell=/bin/bash home="{{ borgbackup_server_base_path }}" createhome=yes group="{{ borgbackup_group }}" groups= state=present
+
+- name: Ensure base path is present
+  ansible.builtin.file: path="{{ borgbackup_server_base_path }}" owner="{{ borgbackup_user }}" group="{{ borgbackup_group }}" mode=0700 state=directory
+
+- name: Ensure .ssh path is present
+  ansible.builtin.file: path="{{ borgbackup_server_base_path }}/.ssh" owner="{{ borgbackup_user }}" group="{{ borgbackup_group }}" mode=0700 state=directory
+
+- name: Ensure pool path is present
+  ansible.builtin.file: path="{{ borgbackup_server_pool_path }}" owner="{{ borgbackup_user }}" group="{{ borgbackup_group }}" mode=0700 state=directory
+
+- name: Seting up authorized keys
+  ansible.posix.authorized_key:
+    user: "{{ borgbackup_user }}"
+    key: "{{ item.key }}"
+    state: present
+    key_options: 'command="cd {{ borgbackup_server_pool_path }}/{{ item.host }};borg serve --restrict-to-path {{ borgbackup_server_pool_path }}/{{ item.host }}",restrict'
+  with_items: "{{ borgbackup_server_auth_users }}"
+
+- name: Ensure correct permissions for authorized keys file
+  ansible.builtin.file: path="{{ borgbackup_server_base_path }}/.ssh/authorized_keys" owner="{{ borgbackup_user }}" group="{{ borgbackup_group }}" mode=0600 state=file
+
+- name: Ensure every user has backup path
+  ansible.builtin.file: path="{{ borgbackup_server_pool_path }}/{{ item.host }}" owner="{{ borgbackup_user }}" group="{{ borgbackup_group }}" mode=0700 state=directory
+  with_items: "{{ borgbackup_server_auth_users }}"

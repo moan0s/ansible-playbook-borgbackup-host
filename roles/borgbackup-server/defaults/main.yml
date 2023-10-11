@@ -1,0 +1,20 @@
+---
+# borgbackup_server sets up 
+borgbackup_server_enabled: true
+
+borgbackup_server_identifier: borgbackup_server
+
+borgbackup_user: 'borgbackup'
+borgbackup_group: 'borgbackup'
+
+# The hostname at which borgbackup_server is served.
+borgbackup_server_hostname: ''
+
+borgbackup_server_auth_users: []
+
+# The path at which borgbackup_server is served.
+# This value must either be `/` or not end with a slash (e.g. `/borgbackup_server`).
+borgbackup_server_path_prefix: /
+
+borgbackup_server_base_path: "/home/{{ borgbackup_user }}"
+borgbackup_server_pool_path: "{{ borgbackup_server_base_path }}/repos"

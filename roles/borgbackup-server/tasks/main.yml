@@ -1,0 +1,22 @@
+---
+
+- name: Run borgbackup_server installation tasks
+  tags:
+    - setup-all
+    - setup-borgbackup_server
+    - install-all
+    - install-borgbackup_server
+  block:
+    - when: borgbackup_server_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+
+    - when: borgbackup_server_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Run borgbackup_server uninstallation tasks
+  tags:
+    - setup-all
+    - setup-borgbackup_server
+  block:
+    - when: not borgbackup_server_enabled | bool
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
